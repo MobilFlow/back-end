@@ -4,6 +4,7 @@ import com.upc.pe.backend.geolocalization.domain.model.aggregates.MechanicLocati
 import com.upc.pe.backend.geolocalization.domain.model.commands.RegisterMechanicLocationCommand;
 import com.upc.pe.backend.geolocalization.domain.services.MechanicLocationCommandService;
 import com.upc.pe.backend.geolocalization.infrastructure.persistance.jpa.repositories.MechanicLocationRepository;
+import com.upc.pe.backend.iam.infrastructure.acl.IAMContextFacade;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,16 +14,27 @@ import java.util.Optional;
 public class MechanicLocationCommandServiceImpl implements MechanicLocationCommandService {
 
     private final MechanicLocationRepository mechanicLocationRepository;
+    private final IAMContextFacade iamContextFacade;
 
     public MechanicLocationCommandServiceImpl(
-            MechanicLocationRepository mechanicLocationRepository
+            MechanicLocationRepository mechanicLocationRepository,
+            IAMContextFacade iamContextFacade
     ) {
         this.mechanicLocationRepository = mechanicLocationRepository;
+        this.iamContextFacade = iamContextFacade;
     }
-
     @Override
     @Transactional
     public Optional<MechanicLocation> handle(RegisterMechanicLocationCommand command) {
+
+        if (!iamContextFacade.existsMechanicProfileById(command.mechanicId())) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "MechanicProfile %d does not exist",
+                            command.mechanicId()
+                    )
+            );
+        }
 
         var existingLocation =
                 mechanicLocationRepository.findByMechanicId(command.mechanicId());
