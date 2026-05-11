@@ -2,11 +2,16 @@ package com.upc.pe.backend.iam.domain.model.entities;
 
 import com.upc.pe.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Profile;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Getter
+@Setter
 public class MechanicProfile extends AuditableAbstractAggregateRoot<MechanicProfile>{
 
         @Column(nullable = false, unique = true)
@@ -40,6 +45,8 @@ public class MechanicProfile extends AuditableAbstractAggregateRoot<MechanicProf
             this.workshopName    = workshopName;
             this.workshopAddress = workshopAddress;
         }
+
+        public MechanicProfile(){}
 
         public void addSpecialty(Specialty specialty) {
             this.specialties.add(specialty);

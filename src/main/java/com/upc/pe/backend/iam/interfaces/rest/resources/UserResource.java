@@ -8,7 +8,7 @@ import java.util.List;
  * @param email the email address of the user
  * @param fullName the full name of the user
  * @param profilePicture the URL or path to the user's profile picture
- * @param roles the list of role names assigned to the user
+ * @param role the list of role names assigned to the user
  */
-public record UserResource(Long id, String email, String fullName, String profilePicture, List<String> roles) {
+public record UserResource(Long id, String email, String fullName, String profilePicture, String role) {
 }

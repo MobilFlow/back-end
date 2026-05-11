@@ -9,5 +9,5 @@ package com.upc.pe.backend.iam.interfaces.rest.resources;
  * @param fullName the full name of the user
  * @param phoneNumber the URL or path to the user's profile picture
  */
-public record SignUpResource(String email, String password, String fullName, String phoneNumber) {
+public record SignUpResource(String email, String password, String fullName, String phoneNumber, String role) {
 }

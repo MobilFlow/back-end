@@ -52,33 +52,25 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     @Column
     private String profilePicture;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     protected User() {
-        this.roles = new HashSet<>();
+        this.role = Role.getDefaultRole();
     }
 
 
-    public User(String email, String password, String fullName, String phoneNumber, String profilePicture) {
+    public User(String email, String password, String fullName, String phoneNumber, String profilePicture, Role role) {
         this();
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.profilePicture = profilePicture;
+        this.role = role;
     }
 
-    public User(String email, String password, String fullName, String phoneNumber,
-                String profilePicture, List<Role> roles) {
-        this(email, password, fullName, phoneNumber, profilePicture);
-        addRoles(roles);
-    }
 
     /**
      * Adds a single role to the user.
@@ -87,19 +79,7 @@ public class User extends AuditableAbstractAggregateRoot<User> {
      * @return this User instance for method chaining
      */
     public User addRole(Role role) {
-        this.roles.add(role);
-        return this;
-    }
-
-    /**
-     * Adds a collection of roles to the user.
-     *
-     * @param roles list of Role entities to add
-     * @return this User instance for method chaining
-     */
-    public User addRoles(List<Role> roles) {
-        var validated = Role.validateRoleSet(roles);
-        this.roles.addAll(validated);
+        this.role =role;
         return this;
     }
 }
