@@ -90,13 +90,15 @@ public class TokenServiceImpl implements BearerTokenService {
     /**
      * Generate token for a given username with roles.
      * @param username The username.
-     * @param roles The set of roles.
+     * @param role The set of roles.
      * @return {@link String} generated token.
      */
     @Override
-    public String generateToken(String username, Set<Role> roles) {
+    public String generateToken(String username, Role role) {
+
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", roles.stream().map(role -> role.getName().name()).collect(Collectors.toList()));
+        claims.put("role", role.getName().name());
+
         return generateToken(username, claims);
     }
 

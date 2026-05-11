@@ -5,15 +5,21 @@ import com.upc.pe.backend.iam.domain.model.commands.ChangePasswordCommand;
 import com.upc.pe.backend.iam.domain.model.commands.SignInCommand;
 import com.upc.pe.backend.iam.domain.model.commands.SignUpCommand;
 import com.upc.pe.backend.iam.domain.model.commands.UpdateUserCommand;
+import com.upc.pe.backend.iam.domain.model.entities.DriverProfile;
+import com.upc.pe.backend.iam.domain.model.entities.MechanicProfile;
+import com.upc.pe.backend.iam.domain.model.entities.Role;
 import com.upc.pe.backend.iam.domain.model.valueobjects.Roles;
 import com.upc.pe.backend.iam.domain.services.UserCommandService;
 import com.upc.pe.backend.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
+import com.upc.pe.backend.iam.infrastructure.persistence.jpa.repositories.DriverProfileRepository;
+import com.upc.pe.backend.iam.infrastructure.persistence.jpa.repositories.MechanicProfileRepository;
 import com.upc.pe.backend.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import com.upc.pe.backend.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.upc.pe.backend.iam.infrastructure.tokens.jwt.BearerTokenService;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -26,7 +32,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final RoleRepository roleRepository;
     private final BCryptHashingService hashingService;
     private final BearerTokenService tokenService;
-
+    private final DriverProfileRepository driverProfileRepository;
+    private final MechanicProfileRepository mechanicProfileRepository;
     /**
      * Creates an instance of UserCommandServiceImpl with required dependencies.
      *
@@ -35,11 +42,13 @@ public class UserCommandServiceImpl implements UserCommandService {
      * @param hashingService service for password hashing
      * @param tokenService service for generating JWT tokens
      */
-    public UserCommandServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptHashingService hashingService, BearerTokenService tokenService) {
+    public UserCommandServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptHashingService hashingService, BearerTokenService tokenService, DriverProfileRepository driverProfileRepository,MechanicProfileRepository mechanicProfileRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
+        this.driverProfileRepository = driverProfileRepository;
+        this.mechanicProfileRepository = mechanicProfileRepository;
     }
     /**
      * Handles the sign-in process by verifying credentials and generating a JWT token.
@@ -59,7 +68,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
 
 
-        var token = tokenService.generateToken(user.get().getEmail(), user.get().getRoles());
+        var token = tokenService.generateToken(user.get().getEmail(), user.get().getRole());
 
         return Optional.of(ImmutablePair.of(user.get(), token));
     }
@@ -71,23 +80,52 @@ public class UserCommandServiceImpl implements UserCommandService {
      */
     @Override
     public Optional<User> handle(SignUpCommand command) {
+
         if (userRepository.existsByEmail(command.email())) {
-            throw new IllegalArgumentException(String.format("User with email %s already exists", command.email()));
+            throw new IllegalArgumentException(
+                    String.format("User with email %s already exists", command.email()));
         }
 
         var hashedPassword = hashingService.encode(command.password());
 
-        var defaultRole = roleRepository.findByName(Roles.ROLE_DRIVER)
-                .orElseThrow(() -> new IllegalStateException("Default role ROLE_DRIVER not found. Please seed roles."));
+        var role = roleRepository.findByName(Roles.valueOf(command.roleName()))
+                .orElseThrow(() ->
+                        new IllegalStateException("Role not found"));
 
-        var user = new User(command.email(), hashedPassword, command.fullName(), command.phoneNumber(),"https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original");
-        user.addRole(defaultRole);
+        var user = new User(
+                command.email(),
+                hashedPassword,
+                command.fullName(),
+                command.phoneNumber(),
+                "https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+                role
+        );
 
         var createdUser = userRepository.save(user);
 
+        if (createdUser.getRole().getName() == Roles.ROLE_DRIVER) {
+
+            var driverProfile = new DriverProfile(
+                    createdUser.getId()
+            );
+
+            driverProfileRepository.save(driverProfile);
+        }
+
+        if (createdUser.getRole().getName() == Roles.ROLE_MECHANIC) {
+
+            var mechanicProfile = new MechanicProfile(
+                    createdUser.getId(),
+                    "New mechanic",
+                    "Workshop name pending",
+                    "Workshop address pending"
+            );
+
+            mechanicProfileRepository.save(mechanicProfile);
+        }
+
         return Optional.of(createdUser);
     }
-
     @Override
     public User updateUser(UpdateUserCommand command) {
         User user = userRepository.findById(command.id())
