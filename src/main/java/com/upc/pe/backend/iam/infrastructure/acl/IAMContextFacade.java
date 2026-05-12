@@ -4,4 +4,7 @@ public interface IAMContextFacade {
 
     boolean existsMechanicProfileById(Long mechanicProfileId);
 
+    boolean existsDriverProfileById(Long driverProfileId);
+
+    boolean existsCarById(Long carId);
 }
