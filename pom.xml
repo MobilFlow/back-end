@@ -146,8 +146,8 @@
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[17,18)</version>
-                                    <message>Usa JDK 17 como SDK del proyecto y JAVA_HOME (actualmente no está permitido otro major).</message>
+                                    <version>[17,22)</version>
+                                    <message>Usa JDK 17+ como SDK del proyecto.</message>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
