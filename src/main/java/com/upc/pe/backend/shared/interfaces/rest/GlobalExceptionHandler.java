@@ -41,10 +41,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
-    /**
-     * Fallback when no bounded-context advice applies (e.g. non-REST beans).
-     * Context-scoped advices use {@link com.acme.procedurescafelab.shared.interfaces.rest.support.CafeLabScopedExceptionHandlerSupport}.
-     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<MessageResource> handleIllegalArgument(IllegalArgumentException ex) {
         String msg = ex.getMessage();

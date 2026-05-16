@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.acme</groupId>
-    <artifactId>Procedures-CafeLab</artifactId>
+    <artifactId>AutoMatchb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Procedures-CafeLab</name>
-    <description>Procedures-CafeLab</description>
+    <name>AutoMatch</name>
+    <description>AutoMatch</description>
     <url/>
     <licenses>
         <license/>
@@ -126,6 +126,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>4.0.0</version>
         </dependency>
 
     </dependencies>
