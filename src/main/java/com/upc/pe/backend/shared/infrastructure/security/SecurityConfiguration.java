@@ -18,14 +18,9 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers(
-            ROOT,
-            ERROR,
-            SWAGGER_UI,
-            SWAGGER_HTML,
-            OPEN_API
-        ).permitAll().anyRequest().permitAll()
-            );
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
     }
 }
