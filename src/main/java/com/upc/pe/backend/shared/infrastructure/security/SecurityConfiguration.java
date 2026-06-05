@@ -24,14 +24,7 @@ public class SecurityConfiguration {
             SWAGGER_UI,
             SWAGGER_HTML,
             OPEN_API
-        ).permitAll().anyRequest().authenticated())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(
-                    ROOT,
-                    ERROR,
-                    SWAGGER_UI,
-                    SWAGGER_HTML,
-                    OPEN_API
-                )
+        ).permitAll().anyRequest().permitAll()
             );
         return http.build();
     }
