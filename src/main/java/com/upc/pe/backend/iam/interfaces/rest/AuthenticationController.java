@@ -53,6 +53,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "User authenticated successfully."),
             @ApiResponse(responseCode = "404", description = "User not found.")})
     public ResponseEntity<AuthenticatedUserResource> signIn(@RequestBody SignInResource signInResource) {
+        System.out.println("ENTRO AL SIGN IN");
         var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
         var authenticatedUser = userCommandService.handle(signInCommand);
         if (authenticatedUser.isEmpty()) {
@@ -74,6 +75,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "201", description = "User created successfully."),
             @ApiResponse(responseCode = "400", description = "Bad request.")})
     public ResponseEntity<UserResource> signUp(@RequestBody SignUpResource signUpResource) {
+        System.out.println("ENTRO AL SIGN UP");
         var signUpCommand = SignUpCommandFromResourceAssembler.toCommandFromResource(signUpResource);
         var user = userCommandService.handle(signUpCommand);
         if (user.isEmpty()) {
