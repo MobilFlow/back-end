@@ -6,9 +6,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-
+  /*
 @Configuration
 @EnableWebSecurity
+
 public class SecurityConfiguration {
 
     private static final String ROOT = "/";
@@ -20,7 +21,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers(
+      http.authorizeHttpRequests(auth -> auth.requestMatchers(
                 ROOT,
                 ERROR,
                 SWAGGER_UI,
@@ -30,5 +31,6 @@ public class SecurityConfiguration {
         ).permitAll().anyRequest().authenticated());
 
         return http.build();
+
     }
-}
+*/
