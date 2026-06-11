@@ -7,6 +7,7 @@ public class CreateServiceRequestCommandFromResourceAssembler {
 
     public static RequestServiceCommand toCommandFromResource(CreateServiceRequestResource resource) {
         return new RequestServiceCommand(
+                resource.serviceId(),
                 resource.driverProfileId(),
                 resource.mechanicProfileId(),
                 resource.carId(),

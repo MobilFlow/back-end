@@ -15,6 +15,9 @@ import java.util.Date;
 public class ServiceRequest extends AuditableAbstractAggregateRoot<ServiceRequest> {
 
     @Column(nullable = false)
+    private Long serviceId;   // @Braulio Nuevo
+
+    @Column(nullable = false)
     private Long driverProfileId;
 
     @Column(nullable = false)
@@ -46,6 +49,7 @@ public class ServiceRequest extends AuditableAbstractAggregateRoot<ServiceReques
     public ServiceRequest() {}
 
     public ServiceRequest(RequestServiceCommand command) {
+        this.serviceId = command.serviceId(); // @Braulio Nuevo
         this.driverProfileId = command.driverProfileId();
         this.mechanicProfileId = command.mechanicProfileId();
         this.carId = command.carId();

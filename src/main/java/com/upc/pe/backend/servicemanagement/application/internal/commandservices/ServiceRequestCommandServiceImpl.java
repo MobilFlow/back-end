@@ -11,6 +11,8 @@ import com.upc.pe.backend.servicemanagement.infrastructure.persistence.jpa.repos
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.upc.pe.backend.servicecatalog.infrastructure.persistence.jpa.repositories.ServiceRepository;
+
 import java.util.Optional;
 
 @Service
@@ -18,13 +20,16 @@ public class ServiceRequestCommandServiceImpl implements ServiceRequestCommandSe
 
     private final ServiceRequestRepository serviceRequestRepository;
     private final IAMContextFacade iamContextFacade;
+    private final ServiceRepository serviceRepository;
 
     public ServiceRequestCommandServiceImpl(
             ServiceRequestRepository serviceRequestRepository,
-            IAMContextFacade iamContextFacade
+            IAMContextFacade iamContextFacade,
+            ServiceRepository serviceRepository
     ) {
         this.serviceRequestRepository = serviceRequestRepository;
         this.iamContextFacade = iamContextFacade;
+        this.serviceRepository = serviceRepository;
     }
 
     @Override
@@ -46,6 +51,22 @@ public class ServiceRequestCommandServiceImpl implements ServiceRequestCommandSe
         if (!iamContextFacade.existsCarById(command.carId())) {
             throw new IllegalArgumentException(
                     String.format("Car %d does not exist", command.carId())
+            );
+        }
+
+        var service = serviceRepository.findById(command.serviceId());
+
+        if (service.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("Service %d does not exist", command.serviceId())
+            );
+        }
+
+        if (!service.get().getMechanicProfileId()
+                .equals(command.mechanicProfileId())) {
+
+            throw new IllegalArgumentException(
+                    "The selected service does not belong to the selected mechanic"
             );
         }
 

@@ -8,6 +8,7 @@ public class ServiceRequestResourceFromEntityAssembler {
     public static ServiceRequestResource toResourceFromEntity(ServiceRequest entity) {
         return new ServiceRequestResource(
                 entity.getId(),
+                entity.getServiceId(),
                 entity.getDriverProfileId(),
                 entity.getMechanicProfileId(),
                 entity.getCarId(),

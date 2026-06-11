@@ -6,6 +6,7 @@ import java.util.Date;
 
 public record ServiceRequestResource(
         Long id,
+        Long serviceId,
         Long driverProfileId,
         Long mechanicProfileId,
         Long carId,
