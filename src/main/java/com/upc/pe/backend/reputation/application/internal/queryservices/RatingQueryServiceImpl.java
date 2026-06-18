@@ -3,6 +3,7 @@ package com.upc.pe.backend.reputation.application.internal.queryservices;
 import com.upc.pe.backend.reputation.domain.model.aggregates.Rating;
 import com.upc.pe.backend.reputation.domain.model.queries.GetAllRatingsQuery;
 import com.upc.pe.backend.reputation.domain.model.queries.GetRatingByIdQuery;
+import com.upc.pe.backend.reputation.domain.model.queries.GetRatingsByMechanicIdQuery;
 import com.upc.pe.backend.reputation.domain.services.RatingQueryService;
 import com.upc.pe.backend.reputation.infrastructure.persistence.jpa.repositories.RatingRepository;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,10 @@ public class RatingQueryServiceImpl implements RatingQueryService {
     @Override
     public Optional<Rating> handle(GetRatingByIdQuery query) {
         return ratingRepository.findById(query.ratingId());
+    }
+
+    @Override
+    public List<Rating> handle(GetRatingsByMechanicIdQuery query) {
+        return ratingRepository.findAllByMechanicId(query.mechanicId());
     }
 }
