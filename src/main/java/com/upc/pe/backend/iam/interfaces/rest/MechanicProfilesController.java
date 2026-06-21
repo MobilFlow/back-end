@@ -19,6 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.upc.pe.backend.iam.domain.model.commands.CreateSpecialtyCommand;
+import com.upc.pe.backend.iam.interfaces.rest.resources.CreateSpecialtyResource;
+import com.upc.pe.backend.iam.interfaces.rest.resources.SpecialtyResource;
+import com.upc.pe.backend.iam.interfaces.rest.transform.CreateSpecialtyCommandFromResourceAssembler;
 
 import java.util.stream.Collectors;
 
@@ -179,4 +183,24 @@ public class MechanicProfilesController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/specialties")
+        @Operation(summary = "Create specialty")
+        public ResponseEntity<SpecialtyResource> createSpecialty(
+                @RequestBody CreateSpecialtyResource resource
+        ) {
+        var command = CreateSpecialtyCommandFromResourceAssembler
+                .toCommandFromResource(resource);
+
+        var specialty = commandService.handle(command);
+
+        if (specialty.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+        }
+
+        var response = SpecialtyResourceFromEntityAssembler
+                .toResourceFromEntity(specialty.get());
+
+        return ResponseEntity.status(201).body(response);
+        }
 }

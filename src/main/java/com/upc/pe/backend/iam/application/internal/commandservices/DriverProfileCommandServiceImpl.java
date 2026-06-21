@@ -49,28 +49,31 @@ public class DriverProfileCommandServiceImpl implements DriverProfileCommandServ
 
     /** Registers a new Car under the given DriverProfile. */
     @Override
-    @Transactional
-    public Optional<Car> handle(RegisterCarCommand command) {
-        var profile = driverProfileRepository.findById(command.driverProfileId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("DriverProfile %d not found", command.driverProfileId())));
+@Transactional
+public Optional<Car> handle(RegisterCarCommand command) {
+    var profile = driverProfileRepository.findById(command.driverProfileId())
+            .orElseThrow(() -> new IllegalArgumentException(
+                    String.format("DriverProfile %d not found", command.driverProfileId())));
 
-        if (carRepository.existsByPlate(command.plate()))
-            throw new IllegalArgumentException(
-                    String.format("Plate %s is already registered", command.plate()));
+    if (carRepository.existsByPlate(command.plate()))
+        throw new IllegalArgumentException(
+                String.format("Plate %s is already registered", command.plate()));
 
-        var car = new Car(
-                command.driverProfileId(),
-                command.brand(),
-                command.model(),
-                command.year(),
-                command.plate(),
-                command.fuelType()
-        );
-        profile.addCar(car);
-        driverProfileRepository.save(profile);
-        return Optional.of(car);
-    }
+    var car = new Car(
+            command.driverProfileId(),
+            command.brand(),
+            command.model(),
+            command.year(),
+            command.plate(),
+            command.fuelType()
+    );
+
+    car.setDriverProfile(profile);
+
+    Car savedCar = carRepository.save(car);
+
+    return Optional.of(savedCar);
+}
 
     /** Updates an existing Car's details. */
     @Override
@@ -95,4 +98,5 @@ public class DriverProfileCommandServiceImpl implements DriverProfileCommandServ
                         String.format("Car %d not found", command.carId())));
         carRepository.delete(car);
     }
+    
 }
